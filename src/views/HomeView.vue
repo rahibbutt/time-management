@@ -1,0 +1,36 @@
+<script setup>
+import Card from 'primevue/card'
+import Button from 'primevue/button'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+const goToLogin = () => {
+  router.push('/login')
+}
+
+const goToRegister = () => {
+  router.push('/register')
+}
+</script>
+
+<template>
+  <div
+    class="min-h-screen flex items-center justify-center bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 p-4"
+  >
+    <Card class="w-full max-w-md shadow-lg">
+      <template #title>
+        <div class="text-center text-2xl font-semibold text-gray-800">Welcome to the System!</div>
+      </template>
+
+      <template #content>
+        <p class="text-center text-gray-600 mb-6">Please login or register to continue.</p>
+
+        <div class="flex flex-col space-y-4">
+          <Button label="Login" class="w-full" @click="goToLogin" />
+          <Button label="Register" class="w-full p-button-outlined" @click="goToRegister" />
+        </div>
+      </template>
+    </Card>
+  </div>
+</template>

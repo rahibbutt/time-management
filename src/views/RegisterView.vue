@@ -5,6 +5,7 @@ import Password from 'primevue/password'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
 import { useRouter } from 'vue-router'
+import axios from 'axios'
 
 const router = useRouter()
 
@@ -13,20 +14,27 @@ const email = ref('')
 const password = ref('')
 const confirmPassword = ref('')
 
-const handleRegister = () => {
+const handleRegister = async () => {
   if (password.value !== confirmPassword.value) {
     alert('Passwords do not match')
     return
   }
-  // Add your registration logic here (API call)
-  console.log('Register:', {
-    username: username.value,
-    email: email.value,
-    password: password.value,
-  })
+  try {
+    const response = await axios.post('http://localhost:4000/register', {
+      username: username.value,
+      email: email.value,
+      password: password.value,
+    })
 
-  // On success, redirect to login page
-  router.push('/')
+    alert('Registration successful! Token: ' + response.data.token)
+    router.push('/')
+  } catch (error) {
+    if (error.response) {
+      alert('Error: ' + error.response.data.message)
+    } else {
+      alert('Network error')
+    }
+  }
 }
 </script>
 
