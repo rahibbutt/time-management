@@ -12,17 +12,17 @@ const password = ref('')
 const router = useRouter()
 
 const handleLogin = async () => {
+  console.log('Login function called') // Debug log here
   try {
     const response = await axios.post('http://localhost:4000/api/auth/login', {
       username: username.value,
       password: password.value,
     })
 
-    const token = response.data.token
-    // Save JWT token in localStorage (or use cookies for production-ready apps)
-    localStorage.setItem('jwt_token', token)
+    console.log('API Response:', response.data) // Debug log here
 
-    // Redirect to profile page
+    const token = response.data.token
+    localStorage.setItem('jwt_token', token)
     router.push('/profile')
   } catch (error) {
     console.error('Login failed:', error.response?.data?.message || error.message)

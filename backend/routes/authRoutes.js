@@ -52,7 +52,7 @@ export default function authRoutes(db) {
       return res.status(400).json({ message: 'Missing username or password' })
     }
 
-    db.get('SELECT * FROM users WHERE username = ?', [username], async (err, user) => {
+    db.get('SELECT * FROM users WHERE username = ?', [username], (err, user) => {
       if (err) {
         return res.status(500).json({ message: 'Database error' })
       }
@@ -60,15 +60,24 @@ export default function authRoutes(db) {
         return res.status(401).json({ message: 'Invalid username or password' })
       }
 
-      const passwordMatch = await bcrypt.compare(password, user.password)
-      if (!passwordMatch) {
-        return res.status(401).json({ message: 'Invalid username or password' })
-      }
+      // Move async logic into a separate IIFE (Immediately Invoked Function Expression)
+      ;(async () => {
+        try {
+          const passwordMatch = await bcrypt.compare(password, user.password)
+          if (!passwordMatch) {
+            return res.status(401).json({ message: 'Invalid username or password' })
+          }
 
-      const token = jwt.sign({ id: user.id, username: user.username }, JWT_SECRET, {
-        expiresIn: '1h',
-      })
-      res.json({ message: 'Login successful', token })
+          const token = jwt.sign({ id: user.id, username: user.username }, JWT_SECRET, {
+            expiresIn: '1h',
+          })
+          //console.log('JWT_SECRET:', token)
+          res.json({ message: 'Login successful', token })
+        } catch (error) {
+          console.error(error)
+          res.status(500).json({ message: 'Server error' })
+        }
+      })()
     })
   })
 

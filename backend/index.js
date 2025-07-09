@@ -3,11 +3,11 @@ import sqlite3 from 'sqlite3'
 import cors from 'cors'
 const app = express()
 const PORT = 4000
-import authRoutes from './routes/authRoutes.js'
 import dotenv from 'dotenv'
 dotenv.config()
-// Setup DB
 const db = new sqlite3.Database('./users.db')
+import authRoutes from './routes/authRoutes.js'
+import timeRoutes from './routes/timeRoutes.js'
 
 db.serialize(() => {
   db.run(`CREATE TABLE IF NOT EXISTS users (
@@ -21,6 +21,7 @@ db.serialize(() => {
 app.use(cors()) // Allow all origins for dev
 app.use(express.json()) // parse JSON body
 app.use('/api/auth', authRoutes(db))
+app.use('/api/time', timeRoutes)
 
 // app.get('/profile', authenticateToken, (req, res) => {
 //   res.json({ user: req.user })
