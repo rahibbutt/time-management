@@ -3,15 +3,31 @@ import { ref } from 'vue'
 import InputText from 'primevue/inputtext'
 import Password from 'primevue/password'
 import Button from 'primevue/button'
+import { useRouter } from 'vue-router'
 import Card from 'primevue/card'
+import axios from 'axios'
 
 const username = ref('')
 const password = ref('')
+const router = useRouter()
 
-const handleLogin = () => {
-  console.log('Username:', username.value)
-  console.log('Password:', password.value)
-  // Add API call here
+const handleLogin = async () => {
+  try {
+    const response = await axios.post('http://localhost:4000/api/auth/login', {
+      username: username.value,
+      password: password.value,
+    })
+
+    const token = response.data.token
+    // Save JWT token in localStorage (or use cookies for production-ready apps)
+    localStorage.setItem('jwt_token', token)
+
+    // Redirect to profile page
+    router.push('/profile')
+  } catch (error) {
+    console.error('Login failed:', error.response?.data?.message || error.message)
+    alert(error.response?.data?.message || 'Login failed')
+  }
 }
 </script>
 
