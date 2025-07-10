@@ -3,13 +3,16 @@ import { onMounted } from 'vue'
 import { useTimeStore } from '@/stores/timeStore'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
-
+import { useRouter } from 'vue-router'
+const router = useRouter()
 const store = useTimeStore()
 
 onMounted(() => {
   store.loadTimeBlocks()
 })
-
+const goBack = () => {
+  router.push('/profile')
+}
 // Utility function for formatting time
 function formatDuration(ms) {
   if (!ms || isNaN(ms)) return '0h 0m 0s'
@@ -51,14 +54,21 @@ function formatDuration(ms) {
               </li>
             </ul>
             <div class="mt-4 text-gray-900 font-bold">
-              Total Time Tracked: {{ formatDuration(store.totalTrackedTime) }}
+              Total time tracked today: {{ formatDuration(store.totalTrackedTimeToday) }}
             </div>
             <div class="mt-4 text-gray-900 font-bold">
-              Total Time Tracked Today: {{ formatDuration(store.totalTrackedTimeToday) }}
+              Total time since the beginning: {{ formatDuration(store.totalTrackedTime) }}
             </div>
           </div>
         </div>
+        <Button
+          label="Back to Profile"
+          class="w-full max-w-lg mt-10 bg-indigo-600 border-none hover:bg-indigo-700"
+          @click="goBack"
+        />
       </template>
     </Card>
+
+    <!-- Back to Profile Button -->
   </div>
 </template>

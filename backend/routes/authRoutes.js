@@ -11,7 +11,21 @@ export default function authRoutes(db) {
   const router = express.Router()
 
   router.get('/profile', authenticateToken, (req, res) => {
-    res.json({ user: req.user })
+    db.get(
+      'SELECT id, username, email, created_at as createdAt FROM users WHERE id = ?',
+      [req.user.id],
+      (err, row) => {
+        if (err) {
+          console.error(err)
+          return res.status(500).json({ message: 'Database error' })
+        }
+        if (!row) {
+          return res.status(404).json({ message: 'User not found' })
+        }
+
+        res.json({ user: row })
+      },
+    )
   })
 
   router.post('/register', async (req, res) => {
