@@ -6,6 +6,40 @@ export const useTimeStore = defineStore('time', {
     timeBlocks: [],
     isTracking: false,
   }),
+  getters: {
+    totalTrackedTime(state) {
+      return state.timeBlocks.reduce((total, block) => {
+        if (block.startTime && block.endTime) {
+          const start = new Date(block.startTime)
+          const end = new Date(block.endTime)
+          const duration = end.getTime() - start.getTime()
+          if (!isNaN(duration) && duration > 0) {
+            return total + duration
+          }
+        }
+        return total
+      }, 0)
+    },
+
+    totalTrackedTimeToday(state) {
+      const today = new Date()
+      today.setHours(0, 0, 0, 0)
+
+      return state.timeBlocks.reduce((total, block) => {
+        if (block.startTime && block.endTime) {
+          const start = new Date(block.startTime)
+          const end = new Date(block.endTime)
+          if (start >= today) {
+            const duration = end.getTime() - start.getTime()
+            if (!isNaN(duration) && duration > 0) {
+              return total + duration
+            }
+          }
+        }
+        return total
+      }, 0)
+    },
+  },
   actions: {
     async loadTimeBlocks() {
       const token = localStorage.getItem('jwt_token')

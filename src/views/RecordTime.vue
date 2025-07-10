@@ -9,6 +9,18 @@ const store = useTimeStore()
 onMounted(() => {
   store.loadTimeBlocks()
 })
+
+// Utility function for formatting time
+function formatDuration(ms) {
+  if (!ms || isNaN(ms)) return '0h 0m 0s'
+
+  const totalSeconds = Math.floor(ms / 1000)
+  const hours = Math.floor(totalSeconds / 3600)
+  const minutes = Math.floor((totalSeconds % 3600) / 60)
+  const seconds = totalSeconds % 60
+
+  return `${hours}h ${minutes}m ${seconds}s`
+}
 </script>
 
 <template>
@@ -38,6 +50,12 @@ onMounted(() => {
                 {{ block.endTime ? new Date(block.endTime).toLocaleTimeString() : 'In progress' }}
               </li>
             </ul>
+            <div class="mt-4 text-gray-900 font-bold">
+              Total Time Tracked: {{ formatDuration(store.totalTrackedTime) }}
+            </div>
+            <div class="mt-4 text-gray-900 font-bold">
+              Total Time Tracked Today: {{ formatDuration(store.totalTrackedTimeToday) }}
+            </div>
           </div>
         </div>
       </template>
