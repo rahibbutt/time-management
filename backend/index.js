@@ -11,11 +11,11 @@ import timeRoutes from './routes/timeRoutes.js'
 
 db.serialize(() => {
   db.run(`CREATE TABLE IF NOT EXISTS users (
-                                             id INTEGER PRIMARY KEY AUTOINCREMENT,
-                                             username TEXT UNIQUE,
-                                             email TEXT UNIQUE,
-                                             password TEXT,
-                                             created_at TEXT DEFAULT (datetime('now'))
+         id INTEGER PRIMARY KEY AUTOINCREMENT,
+         username TEXT UNIQUE,
+         email TEXT UNIQUE,
+         password TEXT,
+         created_at TEXT DEFAULT (datetime('now'))
     )`)
 })
 

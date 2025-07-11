@@ -12,18 +12,27 @@ const password = ref('')
 const router = useRouter()
 
 const handleLogin = async () => {
-  console.log('Login function called') // Debug log here
+  console.log('Login function called')
   try {
     const response = await axios.post('http://localhost:4000/api/auth/login', {
       username: username.value,
       password: password.value,
     })
 
-    console.log('API Response:', response.data) // Debug log here
+    console.log('API Response:', response.data)
 
     const token = response.data.token
     localStorage.setItem('jwt_token', token)
-    router.push('/profile')
+
+    const payload = JSON.parse(atob(token.split('.')[1]))
+    console.log('Decoded JWT Payload:', payload)
+    localStorage.setItem('user_role', payload.role)
+
+    if (payload.role === 'admin') {
+      router.push('/admin/dashboard')
+    } else {
+      router.push('/profile')
+    }
   } catch (error) {
     console.error('Login failed:', error.response?.data?.message || error.message)
     alert(error.response?.data?.message || 'Login failed')

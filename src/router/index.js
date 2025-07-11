@@ -4,6 +4,7 @@ import RegisterView from '../views/RegisterView.vue'
 import HomeView from '@/views/HomeView.vue'
 import ProfileView from '@/views/ProfileView.vue'
 import RecordTime from '@/views/RecordTime.vue'
+import AdminDashboardView from '@/views/AdminDashboardView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -34,6 +35,12 @@ const router = createRouter({
       name: 'time',
       component: RecordTime,
       meta: { requiresAuth: true },
+    },
+    {
+      path: '/admin/dashboard',
+      name: 'adminDashboard',
+      component: AdminDashboardView,
+      meta: { requiresAdmin: true },
     },
   ],
 })

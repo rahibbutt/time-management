@@ -1,7 +1,7 @@
 import express from 'express'
 import dotenv from 'dotenv'
 dotenv.config()
-import authenticateToken from '../middleware/auth.js'
+import { authenticateToken } from '../middleware/auth.js'
 
 const router = express.Router()
 

@@ -3,16 +3,19 @@ import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
 dotenv.config()
-import authenticateToken from '../middleware/auth.js'
-
+import { authenticateToken, checkAdminRole } from '../middleware/auth.js'
 const JWT_SECRET = process.env.JWT_SECRET
 
 export default function authRoutes(db) {
   const router = express.Router()
 
+  router.get('/admin/dashboard', authenticateToken, checkAdminRole, (req, res) => {
+    res.json({ message: 'Welcome to Admin Dashboard' })
+  })
+
   router.get('/profile', authenticateToken, (req, res) => {
     db.get(
-      'SELECT id, username, email, created_at as createdAt FROM users WHERE id = ?',
+      'SELECT id, username, email, role, created_at as createdAt FROM users WHERE id = ?',
       [req.user.id],
       (err, row) => {
         if (err) {
@@ -39,8 +42,8 @@ export default function authRoutes(db) {
       const hashedPassword = await bcrypt.hash(password, 10)
 
       db.run(
-        'INSERT INTO users (username, email, password) VALUES (?, ?, ?)',
-        [username, email, hashedPassword],
+        'INSERT INTO users (username, email, password, role) VALUES (?, ?, ?, ?)',
+        [username, email, hashedPassword, 'user'], // Default role: 'user'
         function (err) {
           if (err) {
             if (err.message.includes('UNIQUE constraint')) {
@@ -49,7 +52,11 @@ export default function authRoutes(db) {
             return res.status(500).json({ message: 'Database error' })
           }
 
-          const token = jwt.sign({ id: this.lastID, username }, JWT_SECRET, { expiresIn: '1h' })
+          const token = jwt.sign(
+            { id: this.lastID, username, role: 'user' }, // Include role in JWT
+            JWT_SECRET,
+            { expiresIn: '1h' },
+          )
           res.status(201).json({ message: 'User registered', token })
         },
       )
@@ -74,7 +81,6 @@ export default function authRoutes(db) {
         return res.status(401).json({ message: 'Invalid username or password' })
       }
 
-      // Move async logic into a separate IIFE (Immediately Invoked Function Expression)
       ;(async () => {
         try {
           const passwordMatch = await bcrypt.compare(password, user.password)
@@ -82,11 +88,18 @@ export default function authRoutes(db) {
             return res.status(401).json({ message: 'Invalid username or password' })
           }
 
-          const token = jwt.sign({ id: user.id, username: user.username }, JWT_SECRET, {
-            expiresIn: '1h',
+          // Generate JWT with role included
+          const token = jwt.sign(
+            { id: user.id, username: user.username, role: user.role },
+            JWT_SECRET,
+            { expiresIn: '1h' },
+          )
+
+          res.json({
+            message: 'Login successful',
+            token,
+            role: user.role,
           })
-          //console.log('JWT_SECRET:', token)
-          res.json({ message: 'Login successful', token })
         } catch (error) {
           console.error(error)
           res.status(500).json({ message: 'Server error' })
