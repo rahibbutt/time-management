@@ -47,19 +47,35 @@ onMounted(fetchProfile)
   >
     <Card class="w-full max-w-lg shadow-xl rounded-2xl">
       <template #title>
-        <div class="flex flex-col items-center space-y-4">
-          <div
-            class="w-24 h-24 rounded-full bg-gradient-to-r from-pink-400 to-indigo-400 flex items-center justify-center text-white text-4xl font-bold shadow-md"
-          >
-            {{ user?.username?.charAt(0).toUpperCase() || '?' }}
+        <div class="relative">
+          <!-- Top-right Logout inside Card -->
+          <div class="absolute top-0 right-0">
+            <Button
+              label="Logout"
+              severity="danger"
+              icon="pi pi-sign-out"
+              class="p-button-sm w-full sm:w-auto"
+              @click="logout"
+            />
           </div>
-          <h2 class="text-2xl font-semibold text-gray-800">
-            Hello, {{ user?.username || 'User' }}
-          </h2>
+
+          <!-- Avatar and Greeting -->
+          <div class="flex flex-col items-center space-y-4 pt-8">
+            <div
+              class="w-24 h-24 rounded-full bg-gradient-to-r from-pink-400 to-indigo-400 flex items-center justify-center text-white text-4xl font-bold shadow-md"
+            >
+              {{ user?.username?.charAt(0).toUpperCase() || '?' }}
+            </div>
+            <h2 class="text-2xl font-semibold text-gray-800">
+              Hello, {{ user?.username || 'User' }}
+            </h2>
+          </div>
         </div>
       </template>
+
       <template #content>
         <div v-if="user" class="space-y-4">
+          <!-- User Details -->
           <div class="space-y-3">
             <div class="bg-gray-100 rounded-lg p-4 shadow-sm">
               <p class="text-gray-700"><strong>User ID:</strong> {{ user.id }}</p>
@@ -81,16 +97,11 @@ onMounted(fetchProfile)
               </p>
             </div>
           </div>
+
           <Button
             label="Go to Record Time"
             class="w-full bg-indigo-600 border-none hover:bg-indigo-700"
             @click="goToRecordTime"
-          />
-
-          <Button
-            label="Logout"
-            class="w-full mt-3 bg-red-500 border-none hover:bg-red-600"
-            @click="logout"
           />
         </div>
         <div v-else class="text-center text-gray-700">Loading profile...</div>

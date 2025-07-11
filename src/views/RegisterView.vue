@@ -91,7 +91,7 @@ const handleRegister = async () => {
           <p class="text-center text-sm text-gray-600">
             Already have an account?
 
-            <router-link to="/" class="text-indigo-600 font-medium hover:underline"
+            <router-link to="/login" class="text-indigo-600 font-medium hover:underline"
               >Sign in</router-link
             >
           </p>
