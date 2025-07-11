@@ -8,6 +8,7 @@ dotenv.config()
 const db = new sqlite3.Database('./users.db')
 import authRoutes from './routes/authRoutes.js'
 import timeRoutes from './routes/timeRoutes.js'
+import customerRoutes from './routes/customerRoutes.js'
 
 db.serialize(() => {
   db.run(`CREATE TABLE IF NOT EXISTS users (
@@ -19,16 +20,31 @@ db.serialize(() => {
     )`)
 })
 
+db.serialize(() => {
+  db.run(`CREATE TABLE IF NOT EXISTS time_blocks (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER,
+    start_time TEXT,
+    end_time TEXT
+  )`)
+})
+
+db.serialize(() => {
+  db.run(`CREATE TABLE IF NOT EXISTS customers (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    email TEXT NOT NULL UNIQUE,
+    phone TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  )`)
+})
+
 app.use(cors()) // Allow all origins for dev
 app.use(express.json()) // parse JSON body
 app.use('/api/auth', authRoutes(db))
 app.use('/api/time', timeRoutes)
+app.use('/api', customerRoutes(db))
 
-// app.get('/profile', authenticateToken, (req, res) => {
-//   res.json({ user: req.user })
-// })
-
-// Start server
 app.listen(PORT, () => {
   console.log(`Server listening on http://localhost:${PORT}`)
 })

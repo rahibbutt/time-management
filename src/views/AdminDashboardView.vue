@@ -3,17 +3,27 @@ import Card from 'primevue/card'
 import Button from 'primevue/button'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, computed } from 'vue'
+import { useCustomerStore } from '@/stores/customerStore.js'
 
 const router = useRouter()
-const authorized = ref(false) // <--- NEW: Track auth state
+const authorized = ref(false)
 
+// Use Pinia customer store
+const customerStore = useCustomerStore()
+
+// Computed reactive access to customers and loading state from store
+const customers = computed(() => customerStore.customers)
+const loading = computed(() => customerStore.loading)
+
+// Logout handler
 const handleLogout = () => {
   localStorage.removeItem('jwt_token')
   localStorage.removeItem('user_role')
   router.push('/login')
 }
 
+// On component mount: check auth, then load customers if authorized
 onMounted(async () => {
   try {
     const response = await axios.get('http://localhost:4000/api/auth/admin/dashboard', {
@@ -22,11 +32,16 @@ onMounted(async () => {
       },
     })
     console.log('Admin dashboard response:', response.data)
-    authorized.value = true // <--- Allow rendering
+    authorized.value = true
+
+    // Load customers only if not loaded yet
+    if (customerStore.customers.length === 0) {
+      await customerStore.loadCustomers()
+    }
   } catch (error) {
     console.error('Access denied:', error.response?.data?.message || error.message)
     alert('Access denied: ' + (error.response?.data?.message || error.message))
-    router.push('/login') // Redirect if unauthorized
+    router.push('/login')
   }
 })
 </script>
@@ -38,27 +53,40 @@ onMounted(async () => {
   >
     <Card class="w-full max-w-3xl shadow-lg">
       <template #title>
-        <div class="text-center text-2xl font-semibold text-gray-800">Admin Dashboard</div>
+        <div class="flex justify-between items-center">
+          <h2 class="text-2xl font-semibold text-gray-800">Customer Management</h2>
+          <div class="flex space-x-2">
+            <Button
+              label="Logout"
+              severity="danger"
+              icon="pi pi-sign-out"
+              class="p-button-sm"
+              @click="handleLogout"
+            />
+          </div>
+        </div>
       </template>
       <template #content>
         <div class="flex flex-col gap-6">
           <!-- Example Stats or Actions -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div class="p-4 bg-indigo-100 rounded-lg text-center">
-              <h3 class="text-lg font-semibold text-indigo-800">Users</h3>
-              <p class="text-2xl font-bold">124</p>
+              <h3 class="text-lg font-semibold text-indigo-800">Total Customers</h3>
+              <p class="text-2xl font-bold">{{ customers.length }}</p>
             </div>
             <div class="p-4 bg-purple-100 rounded-lg text-center">
-              <h3 class="text-lg font-semibold text-purple-800">New Signups</h3>
+              <h3 class="text-lg font-semibold text-purple-800">Total projects</h3>
               <p class="text-2xl font-bold">8</p>
             </div>
           </div>
 
           <!-- Example Action Buttons -->
           <div class="flex flex-col gap-2">
-            <Button label="Manage Users" class="w-full" />
-            <Button label="View Reports" severity="secondary" class="w-full" />
-            <Button label="Logout" severity="danger" class="w-full" @click="handleLogout" />
+            <Button
+              label="Manage Customers"
+              class="w-full"
+              @click="router.push('/admin/customer')"
+            />
           </div>
         </div>
       </template>
