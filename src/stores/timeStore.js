@@ -6,40 +6,48 @@ export const useTimeStore = defineStore('time', {
     timeBlocks: [],
     isTracking: false,
   }),
+
   getters: {
+    // Total Tracked Time (All Time) in Seconds
     totalTrackedTime(state) {
-      return state.timeBlocks.reduce((total, block) => {
-        if (block.startTime && block.endTime) {
-          const start = new Date(block.startTime)
-          const end = new Date(block.endTime)
-          const duration = end.getTime() - start.getTime()
-          if (!isNaN(duration) && duration > 0) {
-            return total + duration
+      return Math.floor(
+        state.timeBlocks.reduce((total, block) => {
+          if (block.startTime && block.endTime) {
+            const start = new Date(block.startTime)
+            const end = new Date(block.endTime)
+            const duration = (end - start) / 1000 // seconds
+            return total + (duration > 0 ? duration : 0)
           }
-        }
-        return total
-      }, 0)
+          return total
+        }, 0),
+      )
     },
 
+    // Total Tracked Time Today in Seconds
     totalTrackedTimeToday(state) {
       const today = new Date()
       today.setHours(0, 0, 0, 0)
+      const tomorrow = new Date(today)
+      tomorrow.setDate(today.getDate() + 1)
 
-      return state.timeBlocks.reduce((total, block) => {
-        if (block.startTime && block.endTime) {
-          const start = new Date(block.startTime)
-          const end = new Date(block.endTime)
-          if (start >= today) {
-            const duration = end.getTime() - start.getTime()
-            if (!isNaN(duration) && duration > 0) {
-              return total + duration
+      return Math.floor(
+        state.timeBlocks.reduce((total, block) => {
+          if (block.startTime && block.endTime) {
+            const start = new Date(block.startTime)
+            const end = new Date(block.endTime)
+
+            // Only blocks that overlap with today
+            if (end >= today && start < tomorrow) {
+              const duration = (end - start) / 1000 // seconds
+              return total + (duration > 0 ? duration : 0)
             }
           }
-        }
-        return total
-      }, 0)
+          return total
+        }, 0),
+      )
     },
   },
+
   actions: {
     async loadTimeBlocks() {
       const token = localStorage.getItem('jwt_token')
@@ -51,10 +59,7 @@ export const useTimeStore = defineStore('time', {
             Authorization: `Bearer ${token}`,
           },
         })
-
         this.timeBlocks = response.data
-
-        // Determine if currently tracking (there is a block without endTime)
         this.isTracking = this.timeBlocks.some((block) => !block.endTime)
       } catch (error) {
         console.error('Failed to load time blocks:', error)
@@ -73,9 +78,7 @@ export const useTimeStore = defineStore('time', {
           'http://localhost:4000/api/time',
           { startTime: now, endTime: null },
           {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+            headers: { Authorization: `Bearer ${token}` },
           },
         )
         this.isTracking = true
@@ -92,7 +95,6 @@ export const useTimeStore = defineStore('time', {
 
       const now = new Date().toISOString()
       try {
-        // Find the active time block (endTime is null)
         const activeBlock = this.timeBlocks.find((block) => !block.endTime)
         if (!activeBlock) throw new Error('No active time block found')
 
@@ -100,9 +102,7 @@ export const useTimeStore = defineStore('time', {
           `http://localhost:4000/api/time/${activeBlock.id}`,
           { endTime: now },
           {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+            headers: { Authorization: `Bearer ${token}` },
           },
         )
         this.isTracking = false
