@@ -60,12 +60,19 @@ const chartData = computed(() => {
 const chartOptions = {
   responsive: true,
   maintainAspectRatio: false,
-  scales: {
-    y: {
-      beginAtZero: true,
-      title: {
-        display: true,
-        text: 'Minutes',
+  plugins: {
+    tooltip: {
+      callbacks: {
+        label: function (context) {
+          const rawMinutes = Number(context.raw) || 0
+          const totalSeconds = Math.floor(rawMinutes * 60)
+
+          const hours = Math.floor(totalSeconds / 3600)
+          const minutes = Math.floor((totalSeconds % 3600) / 60)
+          const seconds = totalSeconds % 60
+
+          return `Time: ${hours}h ${minutes}m ${seconds}s`
+        },
       },
     },
   },
@@ -101,8 +108,16 @@ watch(
           <div class="w-full">
             <!-- Bar Chart -->
             <h3 class="text-lg font-semibold text-gray-700 mb-4">Today's Time Blocks:</h3>
-            <div v-if="todayBlocks.length > 0" class="h-72 overflow-x-auto">
-              <Chart type="bar" :data="chartData" :options="chartOptions" />
+
+            <div v-if="todayBlocks.length > 0" class="h-72">
+              <div class="relative w-full h-full">
+                <Chart
+                  type="bar"
+                  :data="chartData"
+                  :options="chartOptions"
+                  style="width: 100%; height: 100%"
+                />
+              </div>
             </div>
             <div v-else class="text-gray-700 text-center mt-4">No time blocks recorded today.</div>
 
@@ -111,7 +126,7 @@ watch(
               Total time tracked today: {{ formatDuration(store.totalTrackedTimeToday) }}
             </div>
             <div class="mt-2 text-gray-900 font-bold">
-              Total time since the beginning: {{ formatDuration(store.totalTrackedTime) }}
+              Total time tracked since the beginning: {{ formatDuration(store.totalTrackedTime) }}
             </div>
           </div>
         </div>

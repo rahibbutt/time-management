@@ -99,6 +99,7 @@ onMounted(fetchProfile)
           </div>
 
           <Button
+            v-if="user.role !== 'admin'"
             label="Go to Record Time"
             class="w-full bg-indigo-600 border-none hover:bg-indigo-700"
             @click="goToRecordTime"

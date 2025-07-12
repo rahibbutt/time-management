@@ -16,7 +16,6 @@ const projectStore = useProjectStore()
 
 // Computed reactive access to customers and loading state from store
 const customers = computed(() => customerStore.customers)
-const loading = computed(() => customerStore.loading)
 const projects = computed(() => projectStore.projects)
 
 // Logout handler
@@ -43,7 +42,7 @@ onMounted(async () => {
   } catch (error) {
     console.error('Access denied:', error.response?.data?.message || error.message)
     alert('Access denied: ' + (error.response?.data?.message || error.message))
-    router.push('/login')
+    await router.push('/login') // <- added await to silence warning
   }
 })
 </script>
