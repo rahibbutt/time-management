@@ -9,55 +9,39 @@ import 'primeicons/primeicons.css'
 import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
+import { useCustomerStore } from '@/stores/customerStore'
 
 const router = useRouter()
+const customerStore = useCustomerStore()
 const authorized = ref(false)
 
-const customers = ref([])
-const loading = ref(false)
 const searchTerm = ref('')
-
 const dialogVisible = ref(false)
 const isEditing = ref(false)
 const currentCustomer = ref({ id: null, name: '', email: '', phone: '' })
 
 onMounted(async () => {
   try {
-    const response = await axios.get('http://localhost:4000/api/auth/admin/dashboard', {
+    await axios.get('http://localhost:4000/api/auth/admin/dashboard', {
       headers: {
         Authorization: 'Bearer ' + localStorage.getItem('jwt_token'),
       },
     })
     authorized.value = true
-    fetchCustomers()
+    if (customerStore.customers.length === 0) {
+      await customerStore.loadCustomers()
+    }
   } catch (error) {
     alert('Access denied: ' + (error.response?.data?.message || error.message))
     router.push('/login')
   }
 })
 
-// Fetch customers from backend
-const fetchCustomers = async () => {
-  loading.value = true
-  try {
-    const res = await axios.get('http://localhost:4000/api/admin/customer', {
-      headers: {
-        Authorization: 'Bearer ' + localStorage.getItem('jwt_token'),
-      },
-    })
-    customers.value = res.data
-  } catch (error) {
-    alert('Failed to fetch customers')
-  } finally {
-    loading.value = false
-  }
-}
-
 const filteredCustomers = computed(() => {
-  if (!searchTerm.value) return customers.value
+  if (!searchTerm.value) return customerStore.customers
 
   const term = searchTerm.value.toLowerCase()
-  return customers.value.filter((c) => {
+  return customerStore.customers.filter((c) => {
     return (
       c.name.toLowerCase().includes(term) ||
       c.email.toLowerCase().includes(term) ||
@@ -81,22 +65,13 @@ const editCustomer = (customer) => {
 const saveCustomer = async () => {
   try {
     if (isEditing.value) {
-      await axios.put(
-        `http://localhost:4000/api/admin/customer/${currentCustomer.value.id}`,
-        currentCustomer.value,
-        {
-          headers: { Authorization: 'Bearer ' + localStorage.getItem('jwt_token') },
-        },
-      )
+      await customerStore.updateCustomer(currentCustomer.value)
       alert('Customer updated')
     } else {
-      await axios.post('http://localhost:4000/api/admin/customer', currentCustomer.value, {
-        headers: { Authorization: 'Bearer ' + localStorage.getItem('jwt_token') },
-      })
+      await customerStore.addCustomer(currentCustomer.value)
       alert('Customer created')
     }
     dialogVisible.value = false
-    fetchCustomers()
   } catch {
     alert('Failed to save customer')
   }
@@ -105,11 +80,8 @@ const saveCustomer = async () => {
 const deleteCustomer = async (customer) => {
   if (confirm(`Are you sure you want to delete ${customer.name}?`)) {
     try {
-      await axios.delete(`http://localhost:4000/api/admin/customer/${customer.id}`, {
-        headers: { Authorization: 'Bearer ' + localStorage.getItem('jwt_token') },
-      })
+      await customerStore.deleteCustomer(customer.id)
       alert('Customer deleted')
-      fetchCustomers()
     } catch {
       alert('Failed to delete customer')
     }

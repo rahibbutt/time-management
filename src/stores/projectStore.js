@@ -7,6 +7,19 @@ export const useProjectStore = defineStore('project', {
     loading: false,
   }),
   actions: {
+    async checkAuthorization() {
+      try {
+        const token = localStorage.getItem('jwt_token')
+        await axios.get('http://localhost:4000/api/auth/admin/dashboard', {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        return true
+      } catch (err) {
+        console.error('Authorization failed:', err)
+        throw err
+      }
+    },
+
     async loadProjects() {
       this.loading = true
       try {

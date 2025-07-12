@@ -7,66 +7,44 @@ import Dialog from 'primevue/dialog'
 import InputText from 'primevue/inputtext'
 import Dropdown from 'primevue/dropdown'
 import 'primeicons/primeicons.css'
+
 import { ref, computed, onMounted } from 'vue'
-import axios from 'axios'
 import { useRouter } from 'vue-router'
+import { useProjectStore } from '@/stores/projectStore'
+import { useCustomerStore } from '@/stores/customerStore'
 
 const router = useRouter()
-const authorized = ref(false)
+const projectStore = useProjectStore()
+const customerStore = useCustomerStore()
 
-const projects = ref([])
-const customers = ref([])
-const loading = ref(false)
+const authorized = ref(false)
 const searchTerm = ref('')
 
 const dialogVisible = ref(false)
 const isEditing = ref(false)
-const currentProject = ref({ id: null, name: '', description: '', customerId: null })
+const currentProject = ref({
+  id: null,
+  name: '',
+  description: '',
+  customerId: null,
+})
 
 onMounted(async () => {
   try {
-    await axios.get('http://localhost:4000/api/auth/admin/dashboard', {
-      headers: { Authorization: 'Bearer ' + localStorage.getItem('jwt_token') },
-    })
+    await projectStore.checkAuthorization()
     authorized.value = true
-    fetchProjects()
-    fetchCustomers()
+    await Promise.all([projectStore.loadProjects(), customerStore.loadCustomers()])
   } catch (error) {
     alert('Access denied: ' + (error.response?.data?.message || error.message))
     router.push('/login')
   }
 })
 
-const fetchProjects = async () => {
-  loading.value = true
-  try {
-    const res = await axios.get('http://localhost:4000/api/admin/project', {
-      headers: { Authorization: 'Bearer ' + localStorage.getItem('jwt_token') },
-    })
-    projects.value = res.data
-  } catch {
-    alert('Failed to fetch projects')
-  } finally {
-    loading.value = false
-  }
-}
-
-const fetchCustomers = async () => {
-  try {
-    const res = await axios.get('http://localhost:4000/api/admin/customer', {
-      headers: { Authorization: 'Bearer ' + localStorage.getItem('jwt_token') },
-    })
-    customers.value = res.data
-  } catch {
-    alert('Failed to fetch customers')
-  }
-}
+const customers = computed(() => customerStore.customers)
 
 const filteredProjects = computed(() => {
-  if (!searchTerm.value) return projects.value
-
   const term = searchTerm.value.toLowerCase()
-  return projects.value.filter(
+  return projectStore.projects.filter(
     (p) =>
       p.name.toLowerCase().includes(term) ||
       (p.description && p.description.toLowerCase().includes(term)) ||
@@ -89,20 +67,13 @@ const editProject = (project) => {
 const saveProject = async () => {
   try {
     if (isEditing.value) {
-      await axios.put(
-        `http://localhost:4000/api/admin/project/${currentProject.value.id}`,
-        currentProject.value,
-        { headers: { Authorization: 'Bearer ' + localStorage.getItem('jwt_token') } },
-      )
+      await projectStore.updateProject(currentProject.value)
       alert('Project updated')
     } else {
-      await axios.post('http://localhost:4000/api/admin/project', currentProject.value, {
-        headers: { Authorization: 'Bearer ' + localStorage.getItem('jwt_token') },
-      })
+      await projectStore.createProject(currentProject.value)
       alert('Project created')
     }
     dialogVisible.value = false
-    fetchProjects()
   } catch {
     alert('Failed to save project')
   }
@@ -111,11 +82,8 @@ const saveProject = async () => {
 const deleteProject = async (project) => {
   if (confirm(`Are you sure you want to delete project "${project.name}"?`)) {
     try {
-      await axios.delete(`http://localhost:4000/api/admin/project/${project.id}`, {
-        headers: { Authorization: 'Bearer ' + localStorage.getItem('jwt_token') },
-      })
+      await projectStore.deleteProject(project.id)
       alert('Project deleted')
-      fetchProjects()
     } catch {
       alert('Failed to delete project')
     }
@@ -176,7 +144,7 @@ const handleLogout = () => {
         <div class="overflow-x-auto">
           <DataTable
             :value="filteredProjects"
-            :loading="loading"
+            :loading="projectStore.loading"
             paginator
             rows="10"
             class="shadow rounded w-full"
