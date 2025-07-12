@@ -5,16 +5,19 @@ import { useRouter } from 'vue-router'
 import axios from 'axios'
 import { onMounted, ref, computed } from 'vue'
 import { useCustomerStore } from '@/stores/customerStore.js'
+import { useProjectStore } from '@/stores/projectStore.js'
 
 const router = useRouter()
 const authorized = ref(false)
 
-// Use Pinia customer store
+// Use Pinia stores
 const customerStore = useCustomerStore()
+const projectStore = useProjectStore()
 
 // Computed reactive access to customers and loading state from store
 const customers = computed(() => customerStore.customers)
 const loading = computed(() => customerStore.loading)
+const projects = computed(() => projectStore.projects)
 
 // Logout handler
 const handleLogout = () => {
@@ -37,6 +40,11 @@ onMounted(async () => {
     // Load customers only if not loaded yet
     if (customerStore.customers.length === 0) {
       await customerStore.loadCustomers()
+    }
+
+    // Load projects only if not loaded yet
+    if (projectStore.projects.length === 0) {
+      await projectStore.loadProjects()
     }
   } catch (error) {
     console.error('Access denied:', error.response?.data?.message || error.message)
@@ -68,25 +76,26 @@ onMounted(async () => {
       </template>
       <template #content>
         <div class="flex flex-col gap-6">
-          <!-- Example Stats or Actions -->
+          <!-- Stats + Buttons Grid -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="p-4 bg-indigo-100 rounded-lg text-center">
+            <div class="flex flex-col bg-indigo-100 rounded-lg text-center p-4">
               <h3 class="text-lg font-semibold text-indigo-800">Total Customers</h3>
-              <p class="text-2xl font-bold">{{ customers.length }}</p>
+              <p class="text-2xl font-bold mb-4">{{ customers.length }}</p>
+              <Button
+                label="Manage Customers"
+                class="w-full"
+                @click="router.push('/admin/customer')"
+              />
             </div>
-            <div class="p-4 bg-purple-100 rounded-lg text-center">
-              <h3 class="text-lg font-semibold text-purple-800">Total projects</h3>
-              <p class="text-2xl font-bold">8</p>
+            <div class="flex flex-col bg-purple-100 rounded-lg text-center p-4">
+              <h3 class="text-lg font-semibold text-purple-800">Total Projects</h3>
+              <p class="text-2xl font-bold mb-4">{{ projects.length }}</p>
+              <Button
+                label="Manage Projects"
+                class="w-full"
+                @click="router.push('/admin/project')"
+              />
             </div>
-          </div>
-
-          <!-- Example Action Buttons -->
-          <div class="flex flex-col gap-2">
-            <Button
-              label="Manage Customers"
-              class="w-full"
-              @click="router.push('/admin/customer')"
-            />
           </div>
         </div>
       </template>

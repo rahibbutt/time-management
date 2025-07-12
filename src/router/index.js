@@ -6,6 +6,7 @@ import ProfileView from '@/views/ProfileView.vue'
 import RecordTime from '@/views/RecordTime.vue'
 import AdminDashboardView from '@/views/AdminDashboardView.vue'
 import CustomerView from '@/views/CustomerView.vue'
+import ProjectView from '@/views/ProjectView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -41,12 +42,18 @@ const router = createRouter({
       path: '/admin/dashboard',
       name: 'adminDashboard',
       component: AdminDashboardView,
-      meta: { requiresAdmin: true },
+      meta: { requiresAdmin: true, adminOnly: true },
     },
     {
       path: '/admin/customer',
       name: 'customer',
       component: CustomerView,
+      meta: { requiresAdmin: true, adminOnly: true },
+    },
+    {
+      path: '/admin/project',
+      name: 'project',
+      component: ProjectView,
       meta: { requiresAdmin: true, adminOnly: true },
     },
   ],

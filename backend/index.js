@@ -39,6 +39,17 @@ db.serialize(() => {
   )`)
 })
 
+db.serialize(() => {
+  db.run(`CREATE TABLE IF NOT EXISTS projects (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    description TEXT,
+    customerId INTEGER NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (customerId) REFERENCES customers(id)
+  )`)
+})
+
 app.use(cors()) // Allow all origins for dev
 app.use(express.json()) // parse JSON body
 app.use('/api/auth', authRoutes(db))
