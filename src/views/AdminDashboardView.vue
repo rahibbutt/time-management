@@ -37,15 +37,9 @@ onMounted(async () => {
     console.log('Admin dashboard response:', response.data)
     authorized.value = true
 
-    // Load customers only if not loaded yet
-    if (customerStore.customers.length === 0) {
-      await customerStore.loadCustomers()
-    }
-
-    // Load projects only if not loaded yet
-    if (projectStore.projects.length === 0) {
-      await projectStore.loadProjects()
-    }
+    // Always reload latest data
+    await customerStore.loadCustomers()
+    await projectStore.loadProjects()
   } catch (error) {
     console.error('Access denied:', error.response?.data?.message || error.message)
     alert('Access denied: ' + (error.response?.data?.message || error.message))

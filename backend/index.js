@@ -9,6 +9,7 @@ const db = new sqlite3.Database('./users.db')
 import authRoutes from './routes/authRoutes.js'
 import timeRoutes from './routes/timeRoutes.js'
 import customerRoutes from './routes/customerRoutes.js'
+import projectRoutes from './routes/projectRoutes.js'
 
 db.serialize(() => {
   db.run(`CREATE TABLE IF NOT EXISTS users (
@@ -55,6 +56,7 @@ app.use(express.json()) // parse JSON body
 app.use('/api/auth', authRoutes(db))
 app.use('/api/time', timeRoutes)
 app.use('/api', customerRoutes(db))
+app.use('/api', projectRoutes(db))
 
 app.listen(PORT, () => {
   console.log(`Server listening on http://localhost:${PORT}`)

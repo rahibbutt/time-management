@@ -132,9 +132,9 @@ const handleLogout = () => {
 <template>
   <div
     v-if="authorized"
-    class="min-h-screen flex items-center justify-center bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 p-4"
+    class="min-h-screen w-full flex items-center justify-center bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 overflow-x-hidden p-4"
   >
-    <Card class="w-full max-w-full sm:max-w-4xl md:max-w-5xl shadow-lg bg-white">
+    <Card class="w-full max-w-full sm:max-w-4xl md:max-w-5xl shadow-lg bg-white overflow-visible">
       <template #title>
         <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
           <h2 class="text-2xl font-semibold text-gray-800">Project Management</h2>
@@ -164,7 +164,7 @@ const handleLogout = () => {
       </template>
 
       <template #content>
-        <div class="mb-4 max-w-md">
+        <div class="mb-4 max-w-md w-full">
           <InputText
             v-model="searchTerm"
             placeholder="Search projects by name, description or customer"
@@ -173,54 +173,59 @@ const handleLogout = () => {
           />
         </div>
 
-        <DataTable
-          :value="filteredProjects"
-          :loading="loading"
-          paginator
-          rows="10"
-          responsiveLayout="scroll"
-          class="shadow rounded"
-          :tableStyle="{ width: '100%' }"
-        >
-          <Column
-            field="name"
-            header="Project Name"
-            sortable
-            headerClass="bg-gray-100"
-            class="px-4 py-2"
-          />
-          <Column
-            field="description"
-            header="Description"
-            headerClass="bg-gray-100"
-            class="px-4 py-2"
-          />
-          <Column
-            field="customerName"
-            header="Customer"
-            headerClass="bg-gray-100"
-            class="px-4 py-2"
-          />
+        <div class="overflow-x-auto">
+          <DataTable
+            :value="filteredProjects"
+            :loading="loading"
+            paginator
+            rows="10"
+            class="shadow rounded w-full"
+            responsiveLayout="stack"
+            breakpoint="640px"
+          >
+            <Column
+              field="name"
+              header="Project Name"
+              sortable
+              headerClass="bg-gray-100"
+              class="px-4 py-2"
+            />
+            <Column
+              field="description"
+              header="Description"
+              headerClass="bg-gray-100"
+              class="whitespace-normal break-words"
+              style="max-width: 200px"
+            />
+            <Column
+              field="customerName"
+              header="Customer"
+              headerClass="bg-gray-100"
+              class="px-4 py-2"
+            />
 
-          <Column header="Actions" headerClass="bg-gray-100" class="px-4 py-2">
-            <template #body="slotProps">
-              <div class="flex space-x-2">
-                <Button
-                  icon="pi pi-pencil"
-                  class="p-button-rounded p-button-sm p-button-outlined p-button-info"
-                  @click="editProject(slotProps.data)"
-                  aria-label="Edit"
-                />
-                <Button
-                  icon="pi pi-trash"
-                  class="p-button-rounded p-button-sm p-button-outlined p-button-danger"
-                  @click="deleteProject(slotProps.data)"
-                  aria-label="Delete"
-                />
-              </div>
-            </template>
-          </Column>
-        </DataTable>
+            <Column header="Actions" headerClass="bg-gray-100" class="text-center">
+              <template #body="{ data }">
+                <div
+                  class="flex flex-col sm:flex-row sm:space-x-2 space-y-2 sm:space-y-0 justify-center"
+                >
+                  <Button
+                    icon="pi pi-pencil"
+                    class="p-button-sm p-button-outlined p-button-info w-full sm:w-auto"
+                    @click="editProject(data)"
+                    aria-label="Edit"
+                  />
+                  <Button
+                    icon="pi pi-trash"
+                    class="p-button-sm p-button-outlined p-button-danger w-full sm:w-auto"
+                    @click="deleteProject(data)"
+                    aria-label="Delete"
+                  />
+                </div>
+              </template>
+            </Column>
+          </DataTable>
+        </div>
 
         <Dialog
           header="Project Details"
