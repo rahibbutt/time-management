@@ -5,6 +5,8 @@ import Button from 'primevue/button'
 import Card from 'primevue/card'
 import Chart from 'primevue/chart'
 import { useRouter } from 'vue-router'
+import Dropdown from 'primevue/dropdown'
+import InputText from 'primevue/inputtext'
 
 const router = useRouter()
 const store = useTimeStore()
@@ -94,17 +96,17 @@ watch(
   >
     <Card class="w-full max-w-4xl shadow-lg p-4">
       <template #title>
-        <div class="text-center text-2xl font-semibold text-gray-800">Time Management</div>
+        <div class="flex justify-between items-center w-full">
+          <div class="text-2xl font-semibold text-gray-800">Time Management</div>
+          <Button
+            label="Back to Profile"
+            class="bg-indigo-600 border-none hover:bg-indigo-700"
+            @click="goBack"
+          />
+        </div>
       </template>
       <template #content>
         <div class="flex flex-col items-center space-y-6">
-          <Button
-            :label="store.isTracking ? 'Stop time tracking' : 'Start time tracking'"
-            @click="store.isTracking ? store.stopTracking() : store.startTracking()"
-            :class="store.isTracking ? 'p-button-danger' : 'p-button-success'"
-            class="w-full"
-          />
-
           <div class="w-full">
             <!-- Bar Chart -->
             <h3 class="text-lg font-semibold text-gray-700 mb-4">Today's Time Blocks:</h3>
@@ -131,12 +133,29 @@ watch(
           </div>
         </div>
 
-        <!-- Back Button -->
-        <Button
-          label="Back to Profile"
-          class="w-full mt-10 bg-indigo-600 border-none hover:bg-indigo-700"
-          @click="goBack"
-        />
+        <div class="flex flex-col items-center mt-5 space-y-6">
+          <!-- Project Dropdown -->
+          <Dropdown
+            v-model="selectedProject"
+            :options="projects"
+            optionLabel="name"
+            placeholder="Select Project (optional)"
+            class="w-full"
+          />
+
+          <!-- Task Description -->
+          <InputText
+            v-model="taskDescription"
+            placeholder="Describe your task (optional)"
+            class="w-full"
+          />
+          <Button
+            :label="store.isTracking ? 'Stop time tracking' : 'Start time tracking'"
+            @click="store.isTracking ? store.stopTracking() : store.startTracking()"
+            :class="store.isTracking ? 'p-button-danger' : 'p-button-success'"
+            class="w-full"
+          />
+        </div>
       </template>
     </Card>
   </div>
