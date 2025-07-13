@@ -1,0 +1,40 @@
+services:
+
+  # Frontend application container
+  frontend-app:
+    networks:
+      - time-management
+    build:
+      context: .
+      dockerfile: dev.Dockerfile
+    container_name: frontend-app
+    restart: always
+    ports:
+      - "5173:5173"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: npm run dev
+    environment:
+      - HOST=0.0.0.0
+    env_file:
+      - .env.docker
+
+  # Backend server container
+  backend:
+    build:
+      context: ./backend
+      dockerfile: dev.Dockerfile
+    container_name: backend
+    networks:
+      - time-management
+    restart: always
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./backend:/app
+      - ./backend/users.db:/app/users.db
+
+networks:
+  time-management:
+    driver: bridge

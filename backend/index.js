@@ -18,6 +18,6 @@ app.use('/api/time', timeRoutes)
 app.use('/api', customerRoutes(db))
 app.use('/api', projectRoutes(db))
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server listening on http://localhost:${PORT}`)
 })
