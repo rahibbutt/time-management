@@ -36,7 +36,17 @@ export default function projectRoutes(db) {
           console.error(err)
           return res.status(500).json({ message: 'Database error' })
         }
-        res.status(201).json({ id: this.lastID, name, description, customerId })
+
+        db.get(`SELECT * FROM customers WHERE id = ?`, [customerId], (err, customer) => {
+          if (err) {
+            console.error(err)
+            return res.status(500).json({ message: 'Database error' })
+          }
+
+          res
+            .status(201)
+            .json({ id: this.lastID, name, description, customerId, customerName: customer.name })
+        })
       },
     )
   })

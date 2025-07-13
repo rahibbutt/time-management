@@ -4,10 +4,11 @@ import axios from 'axios'
 import Card from 'primevue/card'
 import Button from 'primevue/button'
 import { useRouter } from 'vue-router'
+import { useUserStore } from '@/stores/userStore.js'
 
 const user = ref(null)
 const router = useRouter()
-
+const userStore = useUserStore()
 const fetchProfile = async () => {
   const token = localStorage.getItem('jwt_token')
   if (!token) {
@@ -31,6 +32,7 @@ const fetchProfile = async () => {
 
 const logout = () => {
   localStorage.removeItem('jwt_token')
+  userStore.setUser(null)
   router.push('/login')
 }
 

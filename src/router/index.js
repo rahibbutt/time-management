@@ -7,6 +7,7 @@ import RecordTime from '@/views/RecordTime.vue'
 import AdminDashboardView from '@/views/AdminDashboardView.vue'
 import CustomerView from '@/views/CustomerView.vue'
 import ProjectView from '@/views/ProjectView.vue'
+import NotFoundView from '@/views/NotFoundView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -55,6 +56,11 @@ const router = createRouter({
       name: 'project',
       component: ProjectView,
       meta: { requiresAdmin: true, adminOnly: true },
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'NotFound',
+      component: NotFoundView,
     },
   ],
 })

@@ -12,6 +12,8 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useProjectStore } from '@/stores/projectStore'
 import { useCustomerStore } from '@/stores/customerStore'
+import { HttpServiceInstance } from '@/HttpService.js'
+import { checkAuthorization } from '@/checkAuthorization.js'
 
 const router = useRouter()
 const projectStore = useProjectStore()
@@ -31,7 +33,7 @@ const currentProject = ref({
 
 onMounted(async () => {
   try {
-    await projectStore.checkAuthorization()
+    await checkAuthorization()
     authorized.value = true
     await Promise.all([projectStore.loadProjects(), customerStore.loadCustomers()])
   } catch (error) {
@@ -67,10 +69,15 @@ const editProject = (project) => {
 const saveProject = async () => {
   try {
     if (isEditing.value) {
-      await projectStore.updateProject(currentProject.value)
+      const project = currentProject?.value
+      const projectId = project?.id
+      await HttpServiceInstance.put(`/api/admin/project/${projectId}`, project)
+      projectStore.updateProject(project)
       alert('Project updated')
     } else {
-      await projectStore.createProject(currentProject.value)
+      const project = await HttpServiceInstance.post(`/api/admin/project`, currentProject.value)
+      console.log('created new project', project)
+      projectStore.addProject(project.data)
       alert('Project created')
     }
     dialogVisible.value = false
@@ -82,10 +89,11 @@ const saveProject = async () => {
 const deleteProject = async (project) => {
   if (confirm(`Are you sure you want to delete project "${project.name}"?`)) {
     try {
-      await projectStore.deleteProject(project.id)
+      await HttpServiceInstance.delete(`/api/admin/project/${project.id}`)
+      projectStore.deleteProject(project.id)
       alert('Project deleted')
-    } catch {
-      alert('Failed to delete project')
+    } catch (err) {
+      console.error('Failed to delete project:', err)
     }
   }
 }

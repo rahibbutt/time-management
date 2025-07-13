@@ -6,11 +6,12 @@ import Button from 'primevue/button'
 import { useRouter } from 'vue-router'
 import Card from 'primevue/card'
 import axios from 'axios'
+import { useUserStore } from '@/stores/userStore.js'
 
 const username = ref('')
 const password = ref('')
 const router = useRouter()
-
+const userStore = useUserStore()
 const handleLogin = async () => {
   console.log('Login function called')
   try {
@@ -27,7 +28,7 @@ const handleLogin = async () => {
     const payload = JSON.parse(atob(token.split('.')[1]))
     console.log('Decoded JWT Payload:', payload)
     localStorage.setItem('user_role', payload.role)
-
+    userStore.setUser(payload)
     if (payload.role === 'admin') {
       router.push('/admin/dashboard')
     } else {

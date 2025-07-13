@@ -6,6 +6,7 @@ import axios from 'axios'
 import { onMounted, ref, computed } from 'vue'
 import { useCustomerStore } from '@/stores/customerStore.js'
 import { useProjectStore } from '@/stores/projectStore.js'
+import { useUserStore } from '@/stores/userStore.js'
 
 const router = useRouter()
 const authorized = ref(false)
@@ -13,6 +14,7 @@ const authorized = ref(false)
 // Use Pinia stores
 const customerStore = useCustomerStore()
 const projectStore = useProjectStore()
+const userStore = useUserStore()
 
 // Computed reactive access to customers and loading state from store
 const customers = computed(() => customerStore.customers)
@@ -22,6 +24,8 @@ const projects = computed(() => projectStore.projects)
 const handleLogout = () => {
   localStorage.removeItem('jwt_token')
   localStorage.removeItem('user_role')
+  console.log('setting user null to pinia')
+  userStore.setUser(null)
   router.push('/login')
 }
 
