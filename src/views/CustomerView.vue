@@ -149,8 +149,9 @@ const handleLogout = () => {
           <DataTable
             :value="filteredCustomers"
             :loading="loading"
+            :total-records="filteredCustomers.length"
             paginator
-            rows="10"
+            rows="20"
             responsiveLayout="stack"
             breakpoint="640px"
             class="w-full shadow rounded"

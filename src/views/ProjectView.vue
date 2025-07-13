@@ -13,13 +13,14 @@ import { useRouter } from 'vue-router'
 import { useProjectStore } from '@/stores/projectStore'
 import { useCustomerStore } from '@/stores/customerStore'
 import { HttpServiceInstance } from '@/HttpService.js'
-import { checkAuthorization } from '@/checkAuthorization.js'
+import { useUserStore } from '@/stores/userStore.js'
+import { isAdmin, isUserLoggedIn } from '@/helpers/user.helper.js'
 
 const router = useRouter()
 const projectStore = useProjectStore()
 const customerStore = useCustomerStore()
+const userStore = useUserStore()
 
-const authorized = ref(false)
 const searchTerm = ref('')
 
 const dialogVisible = ref(false)
@@ -33,8 +34,10 @@ const currentProject = ref({
 
 onMounted(async () => {
   try {
-    await checkAuthorization()
-    authorized.value = true
+    const user = userStore?.user
+    if (!isUserLoggedIn(user) || !isAdmin(user)) {
+      router.push('/login')
+    }
     await Promise.all([projectStore.loadProjects(), customerStore.loadCustomers()])
   } catch (error) {
     alert('Access denied: ' + (error.response?.data?.message || error.message))
@@ -107,7 +110,6 @@ const handleLogout = () => {
 
 <template>
   <div
-    v-if="authorized"
     class="min-h-screen w-full flex items-center justify-center bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 overflow-x-hidden p-4"
   >
     <Card class="w-full max-w-full sm:max-w-4xl md:max-w-5xl shadow-lg bg-white overflow-visible">
