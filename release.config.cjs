@@ -3,7 +3,6 @@ module.exports = {
   branches: [
     'main', // stable releases
 
-    // Pre-releases from any feature branch (e.g., 1.2.0-feature-login.1)
     { name: 'feature/*', prerelease: true },
   ],
   plugins: [
