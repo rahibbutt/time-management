@@ -1,8 +1,10 @@
+/* eslint-env node */
 /** @type {import('semantic-release').GlobalConfig} */
 module.exports = {
   branches: [
-    'main', // for stable releases
-    { name: 'feature/*', prerelease: true }, // auto-uses the branch name
+    'main',
+    { name: 'feature/**', prerelease: 'feature' },
+    { name: 'bugfix/**', prerelease: 'bugfix' },
   ],
   plugins: [
     '@semantic-release/commit-analyzer',
@@ -17,7 +19,7 @@ module.exports = {
       '@semantic-release/git',
       {
         assets: ['CHANGELOG.md'],
-        message: 'chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}',
+        message: 'release: ${nextRelease.version} \n\n ${nextRelease.notes}',
       },
     ],
     ['@semantic-release/github'],
