@@ -4,8 +4,7 @@ on:
   push:
     branches:
       - 'main'
-      - 'feature/**'
-      - 'dev'
+      - 'feature/*'
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
