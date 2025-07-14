@@ -1,6 +1,11 @@
 /** @type {import('semantic-release').GlobalConfig} */
 module.exports = {
-  branches: ['main'],
+  branches: [
+    'main', // stable releases
+
+    // Pre-releases from any feature branch (e.g., 1.2.0-feature-login.1)
+    { name: 'feature/*', prerelease: true },
+  ],
   plugins: [
     '@semantic-release/commit-analyzer',
     '@semantic-release/release-notes-generator',
@@ -17,14 +22,6 @@ module.exports = {
         message: 'chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}',
       },
     ],
-    [
-      '@semantic-release/github',
-      {
-        assets: [
-          { path: 'dist/**', label: 'Frontend Build (dist)' },
-          { path: 'backend/dist/**', label: 'Backend Build (dist)' },
-        ],
-      },
-    ],
+    ['@semantic-release/github'],
   ],
 }
