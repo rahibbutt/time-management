@@ -1,5 +1,4 @@
-// time-management/release.config.js
-
+/** @type {import('semantic-release').GlobalConfig} */
 module.exports = {
   branches: ['main'],
   plugins: [
