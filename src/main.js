@@ -11,11 +11,10 @@ app.use(PrimeVue, {
   theme: {
     preset: Aura,
     options: {
-      darkModeSelector: false || 'none',
+      darkModeSelector: false,
     },
   },
 })
-
 
 app.use(createPinia())
 app.use(router)
