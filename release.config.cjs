@@ -1,8 +1,9 @@
+/* eslint-env node */
 /** @type {import('semantic-release').GlobalConfig} */
 module.exports = {
   branches: [
     'main', // for stable releases
-    { name: 'feature/*', prerelease: true }, // auto-uses the branch name
+    { name: 'feature/*', prerelease: true }, // prerelease branches
   ],
   plugins: [
     '@semantic-release/commit-analyzer',
