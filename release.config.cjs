@@ -1,10 +1,6 @@
 /** @type {import('semantic-release').GlobalConfig} */
 module.exports = {
-  branches: [
-    'main', // stable releases
-
-    { name: 'feature/*', prerelease: true },
-  ],
+  branches: ['main', { name: 'feature/*', prerelease: 'feature' }],
   plugins: [
     '@semantic-release/commit-analyzer',
     '@semantic-release/release-notes-generator',
