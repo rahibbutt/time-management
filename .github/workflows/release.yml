@@ -3,8 +3,8 @@ name: Release
 on:
   push:
     branches:
-      - 'main'
-      - 'feature/*'
+      - main
+      - 'feature/**'
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
