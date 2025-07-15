@@ -5,7 +5,7 @@ export default function projectRoutes(db) {
   const router = express.Router()
 
   // GET all projects with their associated customer name
-  router.get('/admin/project', authenticateToken, checkAdminRole, (req, res) => {
+  router.get('/admin/project', authenticateToken, (req, res) => {
     const query = `
       SELECT projects.*, customers.name as customerName
       FROM projects

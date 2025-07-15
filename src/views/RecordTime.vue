@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, watch } from 'vue'
+import { computed, onMounted, watch, ref } from 'vue'
 import { useTimeStore } from '@/stores/timeStore'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
@@ -7,9 +7,12 @@ import Chart from 'primevue/chart'
 import { useRouter } from 'vue-router'
 import Dropdown from 'primevue/dropdown'
 import InputText from 'primevue/inputtext'
+import { HttpServiceInstance } from '@/HttpService.js'
+import { API_ROUTE_GET_PROJECTS } from '@/globals.js'
 
 const router = useRouter()
 const store = useTimeStore()
+const projects = ref([])
 
 // Format duration for text display
 const formatDuration = (seconds) => {
@@ -24,7 +27,13 @@ const goBack = () => {
   router.push('/profile')
 }
 
+const getProjects = async () => {
+  const projectsData = await HttpServiceInstance.get(API_ROUTE_GET_PROJECTS)
+  projects.value = projectsData?.data || []
+}
+
 onMounted(async () => {
+  await getProjects()
   await store.loadTimeBlocks() // Load from localStorage or backend
 })
 
