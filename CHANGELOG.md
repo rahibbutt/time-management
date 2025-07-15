@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/rahibbutt/time-management/compare/v1.1.0...v1.2.0) (2025-07-15)
+
+
+### Features
+
+* Fixed project routes and displayed projects for user ([e75fb4c](https://github.com/rahibbutt/time-management/commit/e75fb4c0287a4e7bbf8d62c34ff7660bb7ea3b0b))
+
 # [1.1.0](https://github.com/rahibbutt/time-management/compare/v1.0.0...v1.1.0) (2025-07-14)
 
 
