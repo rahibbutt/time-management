@@ -68,7 +68,7 @@ export const useTimeStore = defineStore('time', {
       }
     },
 
-    async startTracking() {
+    async startTracking({ projectId = null, taskDescription = null } = {}) {
       const token = localStorage.getItem('jwt_token')
       if (!token) throw new Error('No auth token')
 
@@ -76,7 +76,12 @@ export const useTimeStore = defineStore('time', {
       try {
         await axios.post(
           'http://localhost:4000/api/time',
-          { startTime: now, endTime: null },
+          {
+            startTime: now,
+            endTime: null,
+            project_id: projectId,
+            task_description: taskDescription,
+          },
           {
             headers: { Authorization: `Bearer ${token}` },
           },

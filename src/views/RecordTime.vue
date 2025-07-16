@@ -13,6 +13,8 @@ import { API_ROUTE_GET_PROJECTS } from '@/globals.js'
 const router = useRouter()
 const store = useTimeStore()
 const projects = ref([])
+const selectedProject = ref(null)
+const taskDescription = ref('')
 
 // Format duration for text display
 const formatDuration = (seconds) => {
@@ -29,6 +31,7 @@ const goBack = () => {
 
 const getProjects = async () => {
   const projectsData = await HttpServiceInstance.get(API_ROUTE_GET_PROJECTS)
+  console.log('Projects Data is: ', projectsData)
   projects.value = projectsData?.data || []
 }
 
@@ -36,6 +39,19 @@ onMounted(async () => {
   await getProjects()
   await store.loadTimeBlocks() // Load from localStorage or backend
 })
+
+const handleTrackingClick = () => {
+  if (store.isTracking) {
+    store.stopTracking()
+  } else {
+    const projectId = selectedProject.value?.id || null
+    const description = taskDescription.value || null
+    store.startTracking({
+      projectId: selectedProject.value?.id || null,
+      taskDescription: taskDescription.value || null,
+    })
+  }
+}
 
 // Today's Time Blocks (auto-updates)
 const todayBlocks = computed(() => {
@@ -150,6 +166,7 @@ watch(
             optionLabel="name"
             placeholder="Select Project (optional)"
             class="w-full"
+            :disabled="store.isTracking"
           />
 
           <!-- Task Description -->
@@ -157,10 +174,11 @@ watch(
             v-model="taskDescription"
             placeholder="Describe your task (optional)"
             class="w-full"
+            :disabled="store.isTracking"
           />
           <Button
             :label="store.isTracking ? 'Stop time tracking' : 'Start time tracking'"
-            @click="store.isTracking ? store.stopTracking() : store.startTracking()"
+            @click="handleTrackingClick"
             :class="store.isTracking ? 'p-button-danger' : 'p-button-success'"
             class="w-full"
           />

@@ -151,7 +151,7 @@ const handleLogout = () => {
             :loading="loading"
             :total-records="filteredCustomers.length"
             paginator
-            rows="10"
+            rows="8"
             responsiveLayout="stack"
             breakpoint="640px"
             class="w-full shadow rounded"
