@@ -1,3 +1,10 @@
+# [1.3.0-canary.1](https://github.com/rahibbutt/time-management/compare/v1.2.0...v1.3.0-canary.1) (2025-07-16)
+
+
+### Features
+
+* Pre-release setup ([6ca987f](https://github.com/rahibbutt/time-management/commit/6ca987f2abbddebd17997b71508435a5cab9aa88))
+
 # [1.2.0](https://github.com/rahibbutt/time-management/compare/v1.1.0...v1.2.0) (2025-07-15)
 
 
