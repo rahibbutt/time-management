@@ -3,18 +3,15 @@
 module.exports = {
   branches: [
     'main',
-    { name: 'feature/**', prerelease: 'feature' },
-    { name: 'bugfix/**', prerelease: 'bugfix' },
+    {
+      name: 'canary',
+      prerelease: true,
+    },
   ],
   plugins: [
     '@semantic-release/commit-analyzer',
     '@semantic-release/release-notes-generator',
-    [
-      '@semantic-release/changelog',
-      {
-        changelogFile: 'CHANGELOG.md',
-      },
-    ],
+    ['@semantic-release/changelog', { changelogFile: 'CHANGELOG.md' }],
     [
       '@semantic-release/git',
       {
@@ -22,6 +19,6 @@ module.exports = {
         message: 'release: ${nextRelease.version} \n\n ${nextRelease.notes}',
       },
     ],
-    ['@semantic-release/github'],
+    '@semantic-release/github',
   ],
 }
