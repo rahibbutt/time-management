@@ -1,3 +1,10 @@
+# [1.3.0-canary.3](https://github.com/rahibbutt/time-management/compare/v1.3.0-canary.2...v1.3.0-canary.3) (2025-07-17)
+
+
+### Features
+
+* README setup and some tweaks ([735b02c](https://github.com/rahibbutt/time-management/commit/735b02c2ff337ceac3f1d9751a8e713183f67c8c))
+
 # [1.3.0-canary.2](https://github.com/rahibbutt/time-management/compare/v1.3.0-canary.1...v1.3.0-canary.2) (2025-07-17)
 
 
