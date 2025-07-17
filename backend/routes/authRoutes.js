@@ -25,7 +25,6 @@ export default function authRoutes(db) {
         if (!row) {
           return res.status(404).json({ message: 'User not found' })
         }
-
         res.json({ user: row })
       },
     )
@@ -40,10 +39,12 @@ export default function authRoutes(db) {
 
     try {
       const hashedPassword = await bcrypt.hash(password, 10)
+      // Format createdAt as 'YYYY-MM-DD HH:mm:ss'
+      const createdAt = new Date().toISOString().replace('T', ' ').substring(0, 19)
 
       db.run(
-        'INSERT INTO users (username, email, password, role) VALUES (?, ?, ?, ?)',
-        [username, email, hashedPassword, 'user'], // Default role: 'user'
+        'INSERT INTO users (username, email, password, role, created_at) VALUES (?, ?, ?, ?, ?)',
+        [username, email, hashedPassword, 'user', createdAt],
         function (err) {
           if (err) {
             if (err.message.includes('UNIQUE constraint')) {
@@ -52,11 +53,11 @@ export default function authRoutes(db) {
             return res.status(500).json({ message: 'Database error' })
           }
 
-          const token = jwt.sign(
-            { id: this.lastID, username, role: 'user' }, // Include role in JWT
-            JWT_SECRET,
-            { expiresIn: '1h' },
-          )
+          // JWT payload includes user ID, username, role
+          const token = jwt.sign({ id: this.lastID, username, role: 'user' }, JWT_SECRET, {
+            expiresIn: '1h',
+          })
+
           res.status(201).json({ message: 'User registered', token })
         },
       )

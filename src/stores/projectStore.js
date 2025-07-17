@@ -1,19 +1,17 @@
 import { defineStore } from 'pinia'
-import axios from 'axios'
+import { ProjectService } from '@/services/projectService'
 
 export const useProjectStore = defineStore('project', {
   state: () => ({
     projects: [],
     loading: false,
   }),
+
   actions: {
     async loadProjects() {
       this.loading = true
       try {
-        const token = localStorage.getItem('jwt_token')
-        const res = await axios.get('http://localhost:4000/api/admin/project', {
-          headers: { Authorization: `Bearer ${token}` },
-        })
+        const res = await ProjectService.fetchAll()
         this.projects = res.data
       } catch (err) {
         console.error('Failed to load projects:', err)
@@ -28,7 +26,9 @@ export const useProjectStore = defineStore('project', {
 
     updateProject(project) {
       const index = this.projects.findIndex((p) => p.id === project.id)
-      if (index !== -1) this.projects[index] = project
+      if (index !== -1) {
+        this.projects.splice(index, 1, project)
+      }
     },
 
     deleteProject(id) {

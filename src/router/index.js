@@ -67,11 +67,13 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('jwt_token')
+  //console.log(`[Router] from: ${from.fullPath} to: ${to.fullPath} requiresAuth: ${to.meta.requiresAuth}, token exists: ${!!token}`,)
 
   if (to.meta.requiresAuth && !token) {
+    //console.log('Redirecting to /login because route requires auth and no token')
     next('/login')
   } else if ((to.path === '/login' || to.path === '/register') && token) {
-    // Prevent logged-in users from visiting login/register again
+    //console.log('Redirecting logged-in user to /profile')
     next('/profile')
   } else {
     next()
