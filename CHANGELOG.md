@@ -1,3 +1,12 @@
+# [1.3.0-canary.4](https://github.com/rahibbutt/time-management/compare/v1.3.0-canary.3...v1.3.0-canary.4) (2025-07-17)
+
+
+### Features
+
+* Changes in README ([9828897](https://github.com/rahibbutt/time-management/commit/98288973cef094fd4ea8d7887e3df7b710d8d297))
+* Changes in README ([1b97142](https://github.com/rahibbutt/time-management/commit/1b9714236156cb2ed06616c5ad6229f49b7c48f9))
+* Changes in README ([15530ee](https://github.com/rahibbutt/time-management/commit/15530ee2230d1d585dd546605d0404f954175d5e))
+
 # [1.3.0-canary.3](https://github.com/rahibbutt/time-management/compare/v1.3.0-canary.2...v1.3.0-canary.3) (2025-07-17)
 
 
