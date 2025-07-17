@@ -33,7 +33,7 @@ docker compose -f docker-compose.yml down
 ## Run project locally without Docker
 1. Git clone using the web URL:
 ```
-https://github.com/rahibbutt/pokepipeline-frontend.git
+https://github.com/rahibbutt/time-management.git
 ```
 2. From the root of the directory install dependencies for frontend
 ```
