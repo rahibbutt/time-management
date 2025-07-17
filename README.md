@@ -13,7 +13,7 @@ https://github.com/rahibbutt/time-management.git
 ```
 docker compose -f docker-compose.yml up -d 
 ```
-Access the local server at: [http://localhost:5173](http://localhost:5173) &
+Frontend serving at: [http://localhost:5173](http://localhost:5173) &
 Backend serving at: [http://localhost:4000](http://localhost:4000)
 
 ```
@@ -49,11 +49,11 @@ npm run dev
 ```
 Frontend serving at: [http://localhost:5173](http://localhost:5173)
 
-5. Similarly, install dependencies for backend
+5. Similarly, switch to the backend directory
 ```
 cd backend/
 ```
-6. Install dependencies for backend
+6. Install npm dependencies
 ```
 npm install
 ```
