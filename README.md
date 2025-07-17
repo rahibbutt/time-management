@@ -49,15 +49,15 @@ npm run dev
 ```
 Frontend serving at: [http://localhost:5173](http://localhost:5173)
 
-1. Similarly, install dependencies for backend
+5. Similarly, install dependencies for backend
 ```
 cd backend/
 ```
-2. Install dependencies for backend
+6. Install dependencies for backend
 ```
 npm install
 ```
-3. Run backend locally:
+7. Run backend locally:
 ```
 npm run dev
 ```
