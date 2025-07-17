@@ -16,6 +16,16 @@ docker compose -f docker-compose.yml up -d
 Access the local server at: [http://localhost:5173](http://localhost:5173) &
 Backend serving at: [http://localhost:4000](http://localhost:4000)
 
+```
+#User login 
+username: rahib
+password: rahib 
+
+#Admin login 
+username: admin
+password: admin 
+```
+
 3. Shutdown docker containers using docker-compose
 ```
 docker compose -f docker-compose.yml down
@@ -38,15 +48,6 @@ npm run build
 npm run dev
 ```
 Frontend serving at: [http://localhost:5173](http://localhost:5173)
-```
-#User login 
-username: rahib
-password: rahib 
-
-#Admin login 
-username: admin
-password: admin 
-```
 
 1. Similarly, install dependencies for backend
 ```
