@@ -34,8 +34,6 @@ assign the task to a project. This information is saved with the time block
 - Visualization of tracked time per day
 - Table and bar chart views (via PrimeVue Chart)
 
----
-
 ## 💻 Frontend
 
 - **Framework:** Vue 3 with Composition API
@@ -46,8 +44,6 @@ assign the task to a project. This information is saved with the time block
 - **UI Components:** PrimeVue-based forms, tables, dropdowns and charts
 - **ESLint:** For code quality
 
----
-
 ## 🖥️ Backend
 
 - **Runtime & Framework:** Node.js + Express
@@ -56,14 +52,10 @@ assign the task to a project. This information is saved with the time block
 - **Authentication:** JWT-based user sessions
 - **HTTP Client:** Axios (used on frontend to communicate with backend)
 
----
-
 ## ⚙️ DevOps & Tooling
 - Containerization: Docker integration for easy and simple environment setup
 - Versioning: Semantic Versioning for consistent release management
 - Continuous Integration / Continuous Deployment (CI/CD): Automated pipelines to test, build, and deploy the app for development
-
----
 
 ## Run project locally with Docker
 1. Git clone using the github URL:
