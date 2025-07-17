@@ -15,6 +15,7 @@ docker compose -f docker-compose.yml up -d
 ```
 Access the local server at: [http://localhost:5173](http://localhost:5173) &
 Backend serving at: [http://localhost:4000](http://localhost:4000)
+
 3. Shutdown docker containers using docker-compose
 ```
 docker compose -f docker-compose.yml down
