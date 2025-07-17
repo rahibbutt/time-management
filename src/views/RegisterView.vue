@@ -20,14 +20,14 @@ const handleRegister = async () => {
     return
   }
   try {
-    const response = await axios.post('http://localhost:4000/api/auth/register', {
+    await axios.post('http://localhost:4000/api/auth/register', {
       username: username.value,
       email: email.value,
       password: password.value,
     })
 
-    alert('Registration successful! Token: ' + response.data.token)
-    router.push('/')
+    alert('Registration successful!')
+    router.push('/login')
   } catch (error) {
     if (error.response) {
       alert('Error: ' + error.response.data.message)

@@ -7,7 +7,7 @@ import Chart from 'primevue/chart'
 import { useRouter } from 'vue-router'
 import Dropdown from 'primevue/dropdown'
 import InputText from 'primevue/inputtext'
-import { HttpServiceInstance } from '@/HttpService.js'
+import { HttpServiceInstance } from '@/utils/HttpService.js'
 import { API_ROUTE_GET_PROJECTS } from '@/globals.js'
 
 const router = useRouter()
@@ -31,7 +31,7 @@ const goBack = () => {
 
 const getProjects = async () => {
   const projectsData = await HttpServiceInstance.get(API_ROUTE_GET_PROJECTS)
-  console.log('Projects Data is: ', projectsData)
+  //console.log('Projects Data is: ', projectsData)
   projects.value = projectsData?.data || []
 }
 
@@ -47,8 +47,8 @@ const handleTrackingClick = () => {
     const projectId = selectedProject.value?.id || null
     const description = taskDescription.value || null
     store.startTracking({
-      projectId: selectedProject.value?.id || null,
-      taskDescription: taskDescription.value || null,
+      projectId,
+      taskDescription: description,
     })
   }
 }
@@ -109,7 +109,7 @@ const chartOptions = {
 watch(
   () => store.timeBlocks,
   () => {
-    console.log('Time blocks updated:', store.timeBlocks)
+    //console.log('Time blocks updated:', store.timeBlocks)
   },
   { deep: true },
 )

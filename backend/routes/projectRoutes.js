@@ -68,10 +68,27 @@ export default function projectRoutes(db) {
           console.error(err)
           return res.status(500).json({ message: 'Database error' })
         }
+
         if (this.changes === 0) {
           return res.status(404).json({ message: 'Project not found' })
         }
-        res.json({ id, name, description, customerId })
+
+        // Fetch project with customer name
+        const query = `
+        SELECT projects.*, customers.name as customerName
+        FROM projects
+        LEFT JOIN customers ON projects.customerId = customers.id
+        WHERE projects.id = ?
+      `
+
+        db.get(query, [id], (err, row) => {
+          if (err) {
+            console.error(err)
+            return res.status(500).json({ message: 'Database error' })
+          }
+
+          res.json(row)
+        })
       },
     )
   })

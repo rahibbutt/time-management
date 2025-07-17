@@ -7,12 +7,11 @@ import Dialog from 'primevue/dialog'
 import InputText from 'primevue/inputtext'
 import Dropdown from 'primevue/dropdown'
 import 'primeicons/primeicons.css'
-
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useProjectStore } from '@/stores/projectStore'
 import { useCustomerStore } from '@/stores/customerStore'
-import { HttpServiceInstance } from '@/HttpService.js'
+import { ProjectService } from '@/services/projectService.js'
 import { useUserStore } from '@/stores/userStore.js'
 import { isAdmin, isUserLoggedIn } from '@/helpers/user.helper.js'
 
@@ -35,13 +34,24 @@ const currentProject = ref({
 onMounted(async () => {
   try {
     const user = userStore?.user
-    if (!isUserLoggedIn(user) || !isAdmin(user)) {
-      router.push('/login')
+
+    if (!isUserLoggedIn(user)) {
+      return router.push('/login')
     }
+
+    if (!isAdmin(user)) {
+      alert('Access denied: Admins only')
+      return router.push('/profile')
+    }
+
     await Promise.all([projectStore.loadProjects(), customerStore.loadCustomers()])
   } catch (error) {
-    alert('Access denied: ' + (error.response?.data?.message || error.message))
-    router.push('/login')
+    console.error('Error loading admin data:', error)
+    alert('Error: ' + (error.response?.data?.message || error.message))
+    // Optional: redirect if it's a 401
+    if (error.response?.status === 401) {
+      router.push('/login')
+    }
   }
 })
 
@@ -71,20 +81,22 @@ const editProject = (project) => {
 
 const saveProject = async () => {
   try {
+    const project = currentProject.value
+
     if (isEditing.value) {
-      const project = currentProject?.value
-      const projectId = project?.id
-      await HttpServiceInstance.put(`/api/admin/project/${projectId}`, project)
-      projectStore.updateProject(project)
+      const updatedProject = await ProjectService.update(project)
+      // Use updatedProject returned from backend (with customerName updated)
+      projectStore.updateProject(updatedProject.data)
       alert('Project updated')
     } else {
-      const project = await HttpServiceInstance.post(`/api/admin/project`, currentProject.value)
-      console.log('created new project', project)
-      projectStore.addProject(project.data)
+      const response = await ProjectService.create(project)
+      projectStore.addProject(response.data)
       alert('Project created')
     }
+
     dialogVisible.value = false
-  } catch {
+  } catch (error) {
+    console.error('Failed to save project:', error)
     alert('Failed to save project')
   }
 }
@@ -92,11 +104,12 @@ const saveProject = async () => {
 const deleteProject = async (project) => {
   if (confirm(`Are you sure you want to delete project "${project.name}"?`)) {
     try {
-      await HttpServiceInstance.delete(`/api/admin/project/${project.id}`)
+      await ProjectService.remove(project.id)
       projectStore.deleteProject(project.id)
       alert('Project deleted')
-    } catch (err) {
-      console.error('Failed to delete project:', err)
+    } catch (error) {
+      console.error('Failed to delete project:', error)
+      alert('Failed to delete project')
     }
   }
 }
@@ -151,41 +164,49 @@ const handleLogout = () => {
           />
         </div>
 
-        <div class="overflow-x-auto">
+        <div class="w-full overflow-auto">
           <DataTable
             :value="filteredProjects"
             :loading="projectStore.loading"
-            paginator
-            rows="10"
-            class="shadow rounded w-full"
-            responsiveLayout="stack"
-            breakpoint="640px"
+            :totalRecords="filteredProjects.length"
+            :paginator="true"
+            :rows="10"
+            :rowsPerPageOptions="[10, 20, 50]"
+            scrollable
+            scrollHeight="flex"
+            dataKey="id"
+            class="min-w-[600px] shadow rounded"
           >
+            <!-- Project Name -->
             <Column
               field="name"
               header="Project Name"
               sortable
               headerClass="bg-gray-100"
-              class="px-4 py-2"
+              class="break-words whitespace-normal max-w-[200px]"
             />
+
+            <!-- Description -->
             <Column
               field="description"
               header="Description"
               headerClass="bg-gray-100"
-              class="whitespace-normal break-words"
-              style="max-width: 200px"
+              class="break-words whitespace-normal max-w-[300px]"
             />
+
+            <!-- Customer Name -->
             <Column
               field="customerName"
               header="Customer"
               headerClass="bg-gray-100"
-              class="px-4 py-2"
+              class="break-words whitespace-normal max-w-[180px]"
             />
 
+            <!-- Actions -->
             <Column header="Actions" headerClass="bg-gray-100" class="text-center">
               <template #body="{ data }">
                 <div
-                  class="flex flex-col sm:flex-row sm:space-x-2 space-y-2 sm:space-y-0 justify-center"
+                  class="flex flex-col sm:flex-row sm:space-x-2 space-y-2 sm:space-y-0 justify-center items-center"
                 >
                   <Button
                     icon="pi pi-pencil"
