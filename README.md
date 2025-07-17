@@ -38,6 +38,15 @@ npm run build
 npm run dev
 ```
 Frontend serving at: [http://localhost:5173](http://localhost:5173)
+```
+#User login 
+username: rahib
+password: rahib 
+
+#Admin login 
+username: admin
+password: admin 
+```
 
 1. Similarly, install dependencies for backend
 ```
@@ -52,6 +61,16 @@ npm install
 npm run dev
 ```
 Backend serving at: [http://localhost:4000](http://localhost:4000)
+
+```
+#User login 
+username: rahib
+password: rahib 
+
+#Admin login 
+username: admin
+password: admin 
+```
 
 ## 💻 Frontend
 
