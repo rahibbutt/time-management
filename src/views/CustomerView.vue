@@ -10,6 +10,7 @@ import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
 import { useCustomerStore } from '@/stores/customerStore'
+import { CustomerService } from '@/services/customerService.js'
 
 const router = useRouter()
 const customerStore = useCustomerStore()
@@ -65,25 +66,37 @@ const editCustomer = (customer) => {
 const saveCustomer = async () => {
   try {
     if (isEditing.value) {
-      await customerStore.updateCustomer(currentCustomer.value)
+      const updatedCustomer = currentCustomer.value
+      await CustomerService.update(updatedCustomer)
+      customerStore.updateCustomer(updatedCustomer)
       alert('Customer updated')
     } else {
-      await customerStore.addCustomer(currentCustomer.value)
+      const response = await CustomerService.create(currentCustomer.value)
+      customerStore.addCustomer(response.data)
       alert('Customer created')
     }
     dialogVisible.value = false
-  } catch {
-    alert('Failed to save customer')
+  } catch (error) {
+    console.error('Error object:', error)
+    const status = error?.response?.status || error?.status
+
+    if (status === 409) {
+      alert('Email already exists. Please use a different email.')
+    } else {
+      alert('Failed to save customer')
+    }
   }
 }
 
 const deleteCustomer = async (customer) => {
   if (confirm(`Are you sure you want to delete ${customer.name}?`)) {
     try {
-      await customerStore.deleteCustomer(customer.id)
+      await CustomerService.deleteCustomer(customer.id)
+      customerStore.deleteCustomer(customer.id)
       alert('Customer deleted')
-    } catch {
+    } catch (err) {
       alert('Failed to delete customer')
+      console.error(err)
     }
   }
 }
@@ -145,16 +158,18 @@ const handleLogout = () => {
         </div>
 
         <!-- Responsive DataTable -->
-        <div class="w-full max-w-full overflow-x-hidden">
+        <div class="w-full overflow-auto">
           <DataTable
             :value="filteredCustomers"
             :loading="loading"
-            :total-records="filteredCustomers.length"
-            paginator
-            rows="8"
-            responsiveLayout="stack"
-            breakpoint="640px"
-            class="w-full shadow rounded"
+            :totalRecords="filteredCustomers.length"
+            :paginator="true"
+            :rows="8"
+            :rowsPerPageOptions="[8, 16, 32]"
+            scrollable
+            scrollHeight="flex"
+            dataKey="id"
+            class="min-w-[600px] shadow rounded"
           >
             <!-- Name Column -->
             <Column
@@ -171,7 +186,7 @@ const handleLogout = () => {
               header="Email"
               sortable
               headerClass="bg-gray-100"
-              class="break-words whitespace-normal max-w-[160px] sm:max-w-[220px]"
+              class="break-words whitespace-normal max-w-[220px]"
             />
 
             <!-- Phone Column -->
@@ -180,7 +195,7 @@ const handleLogout = () => {
               header="Phone"
               sortable
               headerClass="bg-gray-100"
-              class="break-words whitespace-normal max-w-[120px] sm:max-w-[180px]"
+              class="break-words whitespace-normal max-w-[180px]"
             />
 
             <!-- Actions Column -->

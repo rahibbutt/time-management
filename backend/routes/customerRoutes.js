@@ -16,21 +16,41 @@ export default function customerRoutes(db) {
 
   router.post('/admin/customer', authenticateToken, checkAdminRole, (req, res) => {
     const { name, email, phone } = req.body
+
     if (!name || !email) {
       return res.status(400).json({ message: 'Name and email are required' })
     }
 
-    db.run(
-      'INSERT INTO customers (name, email, phone) VALUES (?, ?, ?)',
-      [name, email, phone || ''],
-      function (err) {
-        if (err) {
-          console.error(err)
-          return res.status(500).json({ message: 'Database error' })
-        }
-        res.status(201).json({ id: this.lastID, name, email, phone })
-      },
-    )
+    // Check for existing email before inserting
+    db.get('SELECT id FROM customers WHERE email = ?', [email], (err, row) => {
+      if (err) {
+        console.error('Error checking existing email:', err)
+        return res.status(500).json({ message: 'Database error' })
+      }
+
+      if (row) {
+        return res.status(409).json({ message: 'Email already exists' }) // Conflict
+      }
+
+      // Proceed to insert
+      db.run(
+        'INSERT INTO customers (name, email, phone) VALUES (?, ?, ?)',
+        [name, email, phone || ''],
+        function (err) {
+          if (err) {
+            console.error('Error inserting customer:', err)
+            return res.status(500).json({ message: 'Database error' })
+          }
+
+          res.status(201).json({
+            id: this.lastID,
+            name,
+            email,
+            phone,
+          })
+        },
+      )
+    })
   })
 
   router.put('/admin/customer/:id', authenticateToken, checkAdminRole, (req, res) => {

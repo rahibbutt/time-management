@@ -26,8 +26,9 @@ const handleRegister = async () => {
       password: password.value,
     })
 
-    alert('Registration successful! Token: ' + response.data.token)
-    router.push('/')
+    //alert('Registration successful! Token: ' + response.data.token)
+    alert('Registration successful!')
+    router.push('/login')
   } catch (error) {
     if (error.response) {
       alert('Error: ' + error.response.data.message)

@@ -1,4 +1,4 @@
-import { HttpServiceInstance } from '@/HttpService.js'
+import { HttpServiceInstance } from '@/utils/HttpService.js'
 
 export async function checkAuthorization() {
   try {
