@@ -19,10 +19,12 @@ db.serialize(() => {
 })
 
 router.post('/', authenticateToken, (req, res) => {
-  const { startTime, endTime } = req.body
+  const { startTime, endTime, project_id, task_description } = req.body
+
   db.run(
-    'INSERT INTO time_blocks (user_id, start_time, end_time) VALUES (?, ?, ?)',
-    [req.user.id, startTime, endTime],
+    `INSERT INTO time_blocks (user_id, start_time, end_time, project_id, task_description)
+     VALUES (?, ?, ?, ?, ?)`,
+    [req.user.id, startTime, endTime, project_id, task_description],
     function (err) {
       if (err) {
         console.error(err)

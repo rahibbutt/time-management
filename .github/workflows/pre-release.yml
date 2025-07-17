@@ -1,36 +1,28 @@
-name: Release
+name: Pre-release
 
 on:
   push:
     branches:
-      - main
-      - 'feature/**'
-      - 'bugfix/**'
+      - 'canary'
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: read # for checkout
 
 jobs:
-  release:
+  ci:
     runs-on: ubuntu-latest
     permissions:
       contents: write # to be able to publish a GitHub release
       issues: write # to be able to comment on released issues
       pull-requests: write # to be able to comment on released pull requests
       id-token: write # to enable use of OIDC for npm provenance
-      pages: write
 
     steps:
       - uses: actions/checkout@v4
       - run: npm install
+      - run: npm run lint
       - run: npm run build
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         run: npx semantic-release
-      - name: Get latest tag
-        id: get_tag
-        run: echo "tag=$(git describe --tags --abbrev=0)" >> "$GITHUB_OUTPUT"

@@ -1,3 +1,35 @@
+# [1.3.0-canary.4](https://github.com/rahibbutt/time-management/compare/v1.3.0-canary.3...v1.3.0-canary.4) (2025-07-17)
+
+
+### Features
+
+* Changes in README ([9828897](https://github.com/rahibbutt/time-management/commit/98288973cef094fd4ea8d7887e3df7b710d8d297))
+* Changes in README ([1b97142](https://github.com/rahibbutt/time-management/commit/1b9714236156cb2ed06616c5ad6229f49b7c48f9))
+* Changes in README ([15530ee](https://github.com/rahibbutt/time-management/commit/15530ee2230d1d585dd546605d0404f954175d5e))
+
+# [1.3.0-canary.3](https://github.com/rahibbutt/time-management/compare/v1.3.0-canary.2...v1.3.0-canary.3) (2025-07-17)
+
+
+### Features
+
+* README setup and some tweaks ([735b02c](https://github.com/rahibbutt/time-management/commit/735b02c2ff337ceac3f1d9751a8e713183f67c8c))
+
+# [1.3.0-canary.2](https://github.com/rahibbutt/time-management/compare/v1.3.0-canary.1...v1.3.0-canary.2) (2025-07-17)
+
+
+### Features
+
+* Refactored code, fixed errors and tweaks ([acc9be2](https://github.com/rahibbutt/time-management/commit/acc9be2e7c3103db6a8a9b0b6f59612f0413f293))
+* Refactored code, fixed errors and tweaks ([66847e8](https://github.com/rahibbutt/time-management/commit/66847e8cf4cc688ae076f475a8744125398b834e))
+* User can now select a project and enter task description ([2138926](https://github.com/rahibbutt/time-management/commit/2138926dcdf7531a9c24b453960283c9be336661))
+
+# [1.3.0-canary.1](https://github.com/rahibbutt/time-management/compare/v1.2.0...v1.3.0-canary.1) (2025-07-16)
+
+
+### Features
+
+* Pre-release setup ([6ca987f](https://github.com/rahibbutt/time-management/commit/6ca987f2abbddebd17997b71508435a5cab9aa88))
+
 # [1.2.0](https://github.com/rahibbutt/time-management/compare/v1.1.0...v1.2.0) (2025-07-15)
 
 

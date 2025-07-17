@@ -6,14 +6,14 @@ import Button from 'primevue/button'
 import { useRouter } from 'vue-router'
 import Card from 'primevue/card'
 import { useUserStore } from '@/stores/userStore.js'
-import { HttpServiceInstance } from '@/HttpService.js'
+import { HttpServiceInstance } from '@/utils/HttpService.js'
 
 const username = ref('')
 const password = ref('')
 const router = useRouter()
 const userStore = useUserStore()
 const handleLogin = async () => {
-  console.log('Login function called')
+  //console.log('Login function called')
   try {
     const response = await HttpServiceInstance.post('/api/auth/login', {
       username: username.value,

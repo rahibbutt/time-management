@@ -2,7 +2,7 @@
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/userStore.js'
-import { HttpServiceInstance } from '@/HttpService.js'
+import { HttpServiceInstance } from '@/utils/HttpService.js'
 const router = useRouter()
 
 const isLoading = ref(true)
@@ -11,7 +11,6 @@ const fetchProfile = async () => {
   const token = localStorage.getItem('jwt_token')
   if (!token) {
     isLoading.value = false
-    router.push('/login')
     return
   }
 
@@ -26,11 +25,18 @@ const fetchProfile = async () => {
 
     userStore.setUser(user)
     isLoading.value = false
-    if (response?.data?.user?.role === 'admin') {
-      router.push(router.currentRoute.value.path)
-    } else {
-      router.push('/profile')
+
+    const currentPath = router.currentRoute.value.fullPath
+
+    // Only redirect if on public or root routes
+    if (['/', '/login', '/register'].includes(currentPath)) {
+      if (user.role === 'admin') {
+        router.push('/admin/dashboard')
+      } else {
+        router.push('/profile')
+      }
     }
+    // Otherwise, stay on current route (no redirect)
   } catch (error) {
     isLoading.value = false
     console.error('Failed to fetch profile:', error)
@@ -38,6 +44,7 @@ const fetchProfile = async () => {
     router.push('/login')
   }
 }
+
 onMounted(fetchProfile)
 </script>
 <template>
