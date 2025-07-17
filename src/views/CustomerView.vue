@@ -177,7 +177,7 @@ const handleLogout = () => {
               header="Name"
               sortable
               headerClass="bg-gray-100"
-              class="break-words whitespace-normal max-w-[200px]"
+              class="break-words whitespace-normal w-[200px]"
             />
 
             <!-- Email Column -->

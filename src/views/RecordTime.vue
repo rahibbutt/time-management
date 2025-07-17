@@ -164,7 +164,7 @@ watch(
             v-model="selectedProject"
             :options="projects"
             optionLabel="name"
-            placeholder="Select Project (optional)"
+            placeholder="Select a project (optional)"
             class="w-full"
             :disabled="store.isTracking"
           />
